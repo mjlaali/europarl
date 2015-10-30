@@ -2,6 +2,7 @@ package org.cleartk.corpus.europarl;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.util.Progress;
+import org.cleartk.util.ViewUriUtil;
 
 public class ParallelFileCollectionReader extends JCasCollectionReader_ImplBase{
 	public static final String PARALLEL_URI_VIEW = "parallelUriView";
@@ -95,9 +97,11 @@ public class ParallelFileCollectionReader extends JCasCollectionReader_ImplBase{
 		}
 		
 		Entry<String, List<File>> parallelUris = iterParallelFiles.next();
-		String enFileUri = parallelUris.getValue().get(0).toURI().toString();
+		URI enUri = parallelUris.getValue().get(0).toURI();
+		String enFileUri = enUri.toString();
 		String frFileUri = parallelUris.getValue().get(1).toURI().toString();
 		view.setDocumentText(String.format("%s\n%s", enFileUri, frFileUri));
+		ViewUriUtil.setURI(jCas, enUri);
 	}
 
 

@@ -31,4 +31,6 @@ public class ParallelDocumentTextReaderTest {
 		assertThat(jCas.getView(ParalleDocumentTextReader.EN_VIEW).getDocumentText()).isEqualTo(FileUtils.readFileToString(enFile));
 		assertThat(jCas.getView(ParalleDocumentTextReader.FR_VIEW).getDocumentText()).isEqualTo(FileUtils.readFileToString(frFile));
 	}
+	
+	
 }

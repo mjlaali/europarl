@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 import org.apache.uima.UIMAException;
@@ -21,7 +20,9 @@ import org.apache.uima.collection.CollectionReader;
 import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.factory.JCasFactory;
+import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.jcas.JCas;
+import org.cleartk.util.cr.linereader.LineReaderXmiWriter;
 import org.junit.Test;
 
 public class ParallelFileCollectionReaderTest {
@@ -29,12 +30,6 @@ public class ParallelFileCollectionReaderTest {
 	//for lists
 	public static <T, U> List<U> convertList(Collection<T> from, Function<T, U> func){
 	    return from.stream().map(func).collect(Collectors.toList());
-	}
-
-	//for arrays
-	public static <T, U> U[] convertArray(T[] from, Function<T, U> func, 
-	                                       IntFunction<U[]> generator){
-	    return Arrays.stream(from).map(func).toArray(generator);
 	}
 	
 	@Test
@@ -65,5 +60,21 @@ public class ParallelFileCollectionReaderTest {
 		}
 		assertThat(enFileNames).isEmpty();
 		assertThat(frFileNames).isEmpty();
+	}
+	
+	@Test
+	public void givenAJCasWithParallelTextWhenSavingItThenTheFileNameIsAutomaticallyDetected() throws UIMAException, IOException{
+		File sampleDir = new File("resources/sample");
+		Set<String> enFileNames = new HashSet<String>(convertList(Arrays.asList(new File(sampleDir, "en").listFiles()), f -> f.getAbsolutePath()));
+//		Set<String> frFileNames = new HashSet<String>(convertList(Arrays.asList(new File(sampleDir, "fr").listFiles()), f -> f.getAbsolutePath()));
+
+		CollectionReaderDescription readerDesc = ParallelFileCollectionReader.getReaderDescription(sampleDir);
+		
+		
+		File outDir = new File("outputs");
+		SimplePipeline.runPipeline(readerDesc, LineReaderXmiWriter.getDescription(outDir));
+		
+		assertThat(outDir.listFiles()).hasSize(enFileNames.size());
+		
 	}
 }
