@@ -21,7 +21,7 @@ import org.junit.Test;
 public class EuroparlParallelTextAnnotatorTest {
 
 	@Test
-	public void givenAParallelTextWhenPuttinAnnotationsThenTheNumberOfParagraphsAreFine() throws ResourceInitializationException, UIMAException, IOException{
+	public void givenAParallelTextWhenPuttingAnnotationsThenTheNumberOfChunksAreFine() throws ResourceInitializationException, UIMAException, IOException{
 		File sampleDir = new File("resources/sample");
 		File outputDir = new File("outputs/textWithAnnotations");
 		if (outputDir.exists()){

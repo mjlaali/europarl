@@ -14,8 +14,8 @@ import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.europarl.type.ParallelChunk;
 
 public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
-	public static final String EN_TEXT_VIEW = "enViewText";
-	public static final String FR_TEXT_VIEW = "frViewText";
+	public static final String EN_TEXT_VIEW = "enTextView";
+	public static final String FR_TEXT_VIEW = "frTextView";
 
 	public static AnalysisEngineDescription getDescription() throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(EuroparlParallelTextAnnotator.class);
@@ -32,8 +32,8 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 	}
 
 	private void setAnnotations(JCas aJCas, String orgViewName, String textViewName) throws CASException {
-		JCas view = aJCas.getView(ParalleDocumentTextReader.EN_VIEW);
-		JCas textView = aJCas.createView(EN_TEXT_VIEW);
+		JCas view = aJCas.getView(orgViewName);
+		JCas textView = aJCas.createView(textViewName);
 
 		String text = view.getDocumentText();
 		

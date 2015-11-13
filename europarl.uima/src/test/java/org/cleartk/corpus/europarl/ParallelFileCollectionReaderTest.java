@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.uima.UIMAException;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.collection.CollectionReader;
@@ -71,7 +72,11 @@ public class ParallelFileCollectionReaderTest {
 		CollectionReaderDescription readerDesc = ParallelFileCollectionReader.getReaderDescription(sampleDir);
 		
 		
-		File outDir = new File("outputs");
+		File outDir = new File("outputs/saving");
+		if (outDir.exists())
+			FileUtils.deleteDirectory(outDir);
+		outDir.mkdirs();
+		
 		SimplePipeline.runPipeline(readerDesc, LineReaderXmiWriter.getDescription(outDir));
 		
 		assertThat(outDir.listFiles()).hasSize(enFileNames.size());
