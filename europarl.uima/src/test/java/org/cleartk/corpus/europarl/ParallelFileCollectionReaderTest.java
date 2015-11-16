@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.uima.UIMAException;
 import org.apache.uima.cas.CAS;
+import org.apache.uima.collection.CollectionException;
 import org.apache.uima.collection.CollectionReader;
 import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
@@ -33,13 +34,50 @@ public class ParallelFileCollectionReaderTest {
 	    return from.stream().map(func).collect(Collectors.toList());
 	}
 	
+	public void givenTwoParallelFilesWhenOrderingIsENFRThenURIAreOrderedENFR() throws IOException, UIMAException{
+		File sampleDir = new File("resources/sample");
+		String enFileName = convertList(Arrays.asList(new File(sampleDir, "en").listFiles())
+				, f -> f.getAbsolutePath()).iterator().next();
+		String frFileName = convertList(Arrays.asList(new File(sampleDir, "fr").listFiles())
+				, f -> f.getAbsolutePath()).iterator().next();
+
+		CollectionReaderDescription readerDesc = ParallelFileCollectionReader.getReaderDescription(sampleDir, "en", "fr");
+		CollectionReader reader = CollectionReaderFactory.createReader(readerDesc);
+		JCas aJCas = JCasFactory.createJCas();
+		CAS cas = aJCas.getCas();
+		
+		reader.getNext(cas);
+		JCas uriView = cas.getJCas().getView(ParallelFileCollectionReader.PARALLEL_URI_VIEW);
+		assertThat(uriView.getDocumentText()).isEqualTo(String.format("%s\n%s", 
+				new File(enFileName).toURI().toString(), new File(frFileName).toURI().toString()));
+	}
+
+	@Test
+	public void givenTwoParallelFilesWhenOrderingIsFRENThenURIAreOrderedFREN() throws IOException, UIMAException{
+		File sampleDir = new File("resources/small-sample");
+		String enFileName = convertList(Arrays.asList(new File(sampleDir, "en").listFiles())
+				, f -> f.getAbsolutePath()).iterator().next();
+		String frFileName = convertList(Arrays.asList(new File(sampleDir, "fr").listFiles())
+				, f -> f.getAbsolutePath()).iterator().next();
+
+		CollectionReaderDescription readerDesc = ParallelFileCollectionReader.getReaderDescription(sampleDir, "fr", "en");
+		CollectionReader reader = CollectionReaderFactory.createReader(readerDesc);
+		JCas aJCas = JCasFactory.createJCas();
+		CAS cas = aJCas.getCas();
+		
+		reader.getNext(cas);
+		JCas uriView = cas.getJCas().getView(ParallelFileCollectionReader.PARALLEL_URI_VIEW);
+		assertThat(uriView.getDocumentText()).isEqualTo(String.format("%s\n%s", 
+				new File(frFileName).toURI().toString(), new File(enFileName).toURI().toString()));
+	}
+
 	@Test
 	public void givenTheDirectoryOfEuroparlWhenReadingFromItDocumentWithUrlsWithParalleDocumentsAreGenerated() throws IOException, UIMAException, URISyntaxException{
 		File sampleDir = new File("resources/sample");
 		Set<String> enFileNames = new HashSet<String>(convertList(Arrays.asList(new File(sampleDir, "en").listFiles()), f -> f.getAbsolutePath()));
 		Set<String> frFileNames = new HashSet<String>(convertList(Arrays.asList(new File(sampleDir, "fr").listFiles()), f -> f.getAbsolutePath()));
 
-		CollectionReaderDescription readerDesc = ParallelFileCollectionReader.getReaderDescription(sampleDir);
+		CollectionReaderDescription readerDesc = ParallelFileCollectionReader.getReaderDescription(sampleDir, "en", "fr");
 		CollectionReader reader = CollectionReaderFactory.createReader(readerDesc);
 
 		JCas aJCas = JCasFactory.createJCas();
@@ -69,7 +107,7 @@ public class ParallelFileCollectionReaderTest {
 		Set<String> enFileNames = new HashSet<String>(convertList(Arrays.asList(new File(sampleDir, "en").listFiles()), f -> f.getAbsolutePath()));
 //		Set<String> frFileNames = new HashSet<String>(convertList(Arrays.asList(new File(sampleDir, "fr").listFiles()), f -> f.getAbsolutePath()));
 
-		CollectionReaderDescription readerDesc = ParallelFileCollectionReader.getReaderDescription(sampleDir);
+		CollectionReaderDescription readerDesc = ParallelFileCollectionReader.getReaderDescription(sampleDir, "en", "fr");
 		
 		
 		File outDir = new File("outputs/saving");

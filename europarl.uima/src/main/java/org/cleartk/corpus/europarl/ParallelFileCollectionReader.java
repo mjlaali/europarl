@@ -27,17 +27,24 @@ import org.cleartk.util.ViewUriUtil;
 public class ParallelFileCollectionReader extends JCasCollectionReader_ImplBase{
 	public static final String PARALLEL_URI_VIEW = "parallelUriView";
 	public static final String PARAM_DIR = "dir";
+	public static final String PARAM_LANGS = "langs";
 
 	@ConfigurationParameter(
 			name = PARAM_DIR, 
 			mandatory = true)
 	private File dir;
+	
+	@ConfigurationParameter(
+			name = PARAM_LANGS, 
+			mandatory = true)
+	private String[] langs;
 	private Iterator<Entry<String, List<File>>> iterParallelFiles;
 
 
-	public static CollectionReaderDescription getReaderDescription(File dir) throws ResourceInitializationException {
+	public static CollectionReaderDescription getReaderDescription(File dir, String first, String second) throws ResourceInitializationException {
 		return CollectionReaderFactory.createReaderDescription(ParallelFileCollectionReader.class, 
-				PARAM_DIR, dir);
+				PARAM_DIR, dir, 
+				PARAM_LANGS, new String[]{first, second});
 	}
 
 	@Override
@@ -72,10 +79,31 @@ public class ParallelFileCollectionReader extends JCasCollectionReader_ImplBase{
 			List<File> toRemove = parallelFiles.remove(enFile);
 			System.err.printf("The file <%s> only availabe in the English directory <%s>. \n", toRemove.get(0).getName(), enDir.getAbsolutePath());
 		}
+		
+		for (Entry<String, List<File>> aParalleFiles: parallelFiles.entrySet()){
+			aParalleFiles.setValue(sort(aParalleFiles.getValue()));
+			
+		}
 
 		iterParallelFiles = parallelFiles.entrySet().iterator();
 	}
 
+
+	private List<File> sort(List<File> files) {
+		List<File> res = new ArrayList<>();
+		for (String lang: langs){
+			Iterator<File> iterator = files.iterator();
+			while (iterator.hasNext()){
+				File file = iterator.next();
+				if (file.getAbsolutePath().contains(String.format("/%s/", lang))){
+					iterator.remove();
+					res.add(file);
+				}
+			}
+		}
+		
+		return res;
+	}
 
 	@Override
 	public boolean hasNext() throws IOException, CollectionException {

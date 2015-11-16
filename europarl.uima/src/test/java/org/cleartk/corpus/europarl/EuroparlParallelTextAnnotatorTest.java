@@ -29,7 +29,7 @@ public class EuroparlParallelTextAnnotatorTest {
 		}
 		outputDir.mkdirs();
 		
-		SimplePipeline.runPipeline(ParallelFileCollectionReader.getReaderDescription(sampleDir), 
+		SimplePipeline.runPipeline(ParallelFileCollectionReader.getReaderDescription(sampleDir, "en", "fr"), 
 				ParalleDocumentTextReader.getDescription(), 
 				EuroparlParallelTextAnnotator.getDescription(), 
 				LineReaderXmiWriter.getDescription(outputDir));
