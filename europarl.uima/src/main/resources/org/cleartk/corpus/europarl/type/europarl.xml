@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
 	<name>europarl</name>
-	<description />
+	<description/>
 	<version>1.0</version>
-	<vendor />
+	<vendor/>
 	<types>
 		<typeDescription>
 			<name>org.cleartk.corpus.europarl.type.Paragraph</name>
-			<description />
+			<description/>
 			<supertypeName>uima.tcas.Annotation</supertypeName>
 		</typeDescription>
-		<typeDescription>
-			<name>org.cleartk.corpus.europarl.type.ParallelChunk</name>
-			<description />
-			<supertypeName>uima.tcas.Annotation</supertypeName>
-		</typeDescription>
-
 	</types>
 </typeSystemDescription>

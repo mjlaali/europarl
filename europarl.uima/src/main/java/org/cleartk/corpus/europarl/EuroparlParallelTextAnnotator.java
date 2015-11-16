@@ -8,11 +8,19 @@ import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CASException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
+import org.apache.uima.fit.descriptor.SofaCapability;
+import org.apache.uima.fit.descriptor.TypeCapability;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.europarl.type.ParallelChunk;
 
+
+@SofaCapability(
+		inputSofas = {ParalleDocumentTextReader.EN_VIEW, ParalleDocumentTextReader.FR_VIEW},
+		outputSofas = {EuroparlParallelTextAnnotator.EN_TEXT_VIEW, EuroparlParallelTextAnnotator.FR_TEXT_VIEW})
+@TypeCapability(
+		outputs = "org.cleartk.corpus.europarl.type.ParallelChunk")
 public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 	public static final String EN_TEXT_VIEW = "enTextView";
 	public static final String FR_TEXT_VIEW = "frTextView";
