@@ -79,14 +79,14 @@ public class EuroparlParallelTextAnnotatorTest {
 				ParalleDocumentTextReader.getDescription(), 
 				EuroparlParallelTextAnnotator.getDescription(), 
         		aggregateBuilder.createAggregateDescription(),
-                createEngineDescription(XmiWriter.class, XmiWriter.PARAM_TARGET_LOCATION, "outputs"));
+                createEngineDescription(XmiWriter.class, XmiWriter.PARAM_TARGET_LOCATION, outputDir.getAbsolutePath()));
 		
 		JCas aJCas = JCasFactory.createJCas();
 		File aFile = new File(outputDir, new File(sampleDir, "en").listFiles()[0].getName() + ".xmi");
 		
 		assertThat(aFile).exists();
 		CasIOUtil.readJCas(aJCas, aFile);
-		assertThat(JCasUtil.select(aJCas, Constituent.class).size()).isGreaterThan(0);
+		assertThat(JCasUtil.select(aJCas.getView(EuroparlParallelTextAnnotator.EN_TEXT_VIEW), Constituent.class).size()).isGreaterThan(0);
 		
 	}
 }
