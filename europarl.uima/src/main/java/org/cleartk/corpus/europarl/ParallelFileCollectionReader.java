@@ -22,7 +22,8 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.util.Progress;
-import org.cleartk.util.ViewUriUtil;
+
+import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 
 public class ParallelFileCollectionReader extends JCasCollectionReader_ImplBase{
 	public static final String PARALLEL_URI_VIEW = "parallelUriView";
@@ -50,6 +51,11 @@ public class ParallelFileCollectionReader extends JCasCollectionReader_ImplBase{
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
 		super.initialize(context);
+		try {
+			dir = dir.getCanonicalFile();
+		} catch (IOException e) {
+			throw new ResourceInitializationException(e);
+		}
 		File[] langDirs = dir.listFiles();
 		if (langDirs.length != 2)
 			throw new ResourceInitializationException(new RuntimeException("Only two languages are supported!"));
@@ -125,11 +131,17 @@ public class ParallelFileCollectionReader extends JCasCollectionReader_ImplBase{
 		}
 		
 		Entry<String, List<File>> parallelUris = iterParallelFiles.next();
-		URI enUri = parallelUris.getValue().get(0).toURI();
-		String enFileUri = enUri.toString();
-		String frFileUri = parallelUris.getValue().get(1).toURI().toString();
-		view.setDocumentText(String.format("%s\n%s", enFileUri, frFileUri));
-		ViewUriUtil.setURI(jCas, enUri);
+		File enFile = parallelUris.getValue().get(0).getCanonicalFile();
+		URI enUri = enFile.toURI();
+		String strEnUri = enUri.toString();
+		String strfrUri = parallelUris.getValue().get(1).getCanonicalFile().toURI().toString();
+		
+		DocumentMetaData documentMetaData = DocumentMetaData.create(jCas);
+		documentMetaData.setDocumentUri(strEnUri);
+		documentMetaData.setDocumentId(enFile.getName());
+		DocumentMetaData.copy(jCas, view);
+		
+		view.setDocumentText(String.format("%s\n%s\n%s\n%s\n%s", strEnUri, langs[0], strfrUri, langs[1], dir.toURI().toString()));
 	}
 
 

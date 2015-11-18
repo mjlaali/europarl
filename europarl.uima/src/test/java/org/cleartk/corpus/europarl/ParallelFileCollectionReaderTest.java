@@ -1,5 +1,6 @@
 package org.cleartk.corpus.europarl;
 
+import static org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
@@ -17,15 +18,15 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.uima.UIMAException;
 import org.apache.uima.cas.CAS;
-import org.apache.uima.collection.CollectionException;
 import org.apache.uima.collection.CollectionReader;
 import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.factory.JCasFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.jcas.JCas;
-import org.cleartk.util.cr.linereader.LineReaderXmiWriter;
 import org.junit.Test;
+
+import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
 
 public class ParallelFileCollectionReaderTest {
 	
@@ -67,8 +68,9 @@ public class ParallelFileCollectionReaderTest {
 		
 		reader.getNext(cas);
 		JCas uriView = cas.getJCas().getView(ParallelFileCollectionReader.PARALLEL_URI_VIEW);
-		assertThat(uriView.getDocumentText()).isEqualTo(String.format("%s\n%s", 
-				new File(frFileName).toURI().toString(), new File(enFileName).toURI().toString()));
+		assertThat(uriView.getDocumentText()).isEqualTo(String.format("%s\nfr\n%s\nen\n%s", 
+				new File(frFileName).toURI().toString(), new File(enFileName).toURI().toString()
+				, sampleDir.getCanonicalFile().toURI().toString()));
 	}
 
 	@Test
@@ -87,7 +89,8 @@ public class ParallelFileCollectionReaderTest {
 			JCas uriView = cas.getJCas().getView(ParallelFileCollectionReader.PARALLEL_URI_VIEW);
 
 			String[] langsUri = uriView.getDocumentText().split("\n");
-			for (String uri: langsUri){
+			for (int i = 0; i < langsUri.length/2; i++){
+				String uri = langsUri[2 * i];
 				File aFile = new File(new URI(uri));
 				if (aFile.getAbsolutePath().contains("/en/"))
 					assertThat(enFileNames.remove(aFile.getAbsolutePath())).isTrue();
@@ -115,9 +118,8 @@ public class ParallelFileCollectionReaderTest {
 			FileUtils.deleteDirectory(outDir);
 		outDir.mkdirs();
 		
-		SimplePipeline.runPipeline(readerDesc, LineReaderXmiWriter.getDescription(outDir));
-		
-		assertThat(outDir.listFiles()).hasSize(enFileNames.size());
+		SimplePipeline.runPipeline(readerDesc, createEngineDescription(XmiWriter.class, XmiWriter.PARAM_TARGET_LOCATION, outDir));
+		assertThat(FileUtils.listFiles(outDir, new String[]{"xmi"}, true)).hasSize(enFileNames.size());
 		
 	}
 }

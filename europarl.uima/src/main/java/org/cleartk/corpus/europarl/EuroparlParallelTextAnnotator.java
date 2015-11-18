@@ -15,6 +15,8 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.europarl.type.ParallelChunk;
 
+import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
+
 
 @SofaCapability(
 		inputSofas = {ParalleDocumentTextReader.EN_VIEW, ParalleDocumentTextReader.FR_VIEW},
@@ -54,7 +56,9 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 			}
 		}
 		
+	    DocumentMetaData.copy(view, textView);
 		textView.setDocumentText(parallelChunksText.toString());
+		textView.setDocumentLanguage(view.getDocumentLanguage());
 		
 		int start = 0;
 		for (String line: lines){
