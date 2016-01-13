@@ -11,6 +11,7 @@ import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.SofaCapability;
 import org.apache.uima.fit.descriptor.TypeCapability;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
+import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.europarl.type.ParallelChunk;
@@ -36,9 +37,28 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 		try {
 			setAnnotations(aJCas, ParalleDocumentTextReader.EN_VIEW, EN_TEXT_VIEW);
 			setAnnotations(aJCas, ParalleDocumentTextReader.FR_VIEW, FR_TEXT_VIEW);
+			align(aJCas);
 		} catch (CASException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void align(JCas aJCas) throws CASException {
+		List<ParallelChunk> enChunks = new ArrayList<>(JCasUtil.select(aJCas.getView(EN_TEXT_VIEW), ParallelChunk.class));
+		List<ParallelChunk> frChunks = new ArrayList<>(JCasUtil.select(aJCas.getView(FR_TEXT_VIEW), ParallelChunk.class));
+		
+		if (enChunks.size() != frChunks.size())
+			getLogger().error("The size of two parallel chunks are not equal." + enChunks.size() + "<>" + frChunks.size());
+		
+		for (int i = 0; i < enChunks.size(); i++){
+			ParallelChunk enChunk = enChunks.get(i);
+			ParallelChunk frChunk = frChunks.get(i);
+			enChunk.setDocOffset(i); 
+			frChunk.setDocOffset(i);
+			enChunk.setTranslation(frChunk);
+			frChunk.setTranslation(enChunk);
+		}
+		
 	}
 
 	private void setAnnotations(JCas aJCas, String orgViewName, String textViewName) throws CASException {

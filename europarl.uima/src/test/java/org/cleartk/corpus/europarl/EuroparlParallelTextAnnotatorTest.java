@@ -89,4 +89,37 @@ public class EuroparlParallelTextAnnotatorTest {
 		assertThat(JCasUtil.select(aJCas.getView(EuroparlParallelTextAnnotator.EN_TEXT_VIEW), Constituent.class).size()).isGreaterThan(0);
 		
 	}
+	
+	@Test
+	public void whenReadingTextsThenParallelChunksOfSourceAreConnectedToTargetAndViceVersa() throws ResourceInitializationException, UIMAException, IOException{
+		File sampleDir = new File("resources/sample");
+		File outputDir = new File("outputs/textWithAnnotations");
+		if (outputDir.exists()){
+			FileUtils.deleteDirectory(outputDir);
+		}
+		outputDir.mkdirs();
+		
+		SimplePipeline.runPipeline(ParallelFileCollectionReader.getReaderDescription(sampleDir, "en", "fr"), 
+				ParalleDocumentTextReader.getDescription(), 
+				EuroparlParallelTextAnnotator.getDescription(), 
+				createEngineDescription(XmiWriter.class, XmiWriter.PARAM_TARGET_LOCATION, outputDir));
+		
+		JCas aJCas = JCasFactory.createJCas();
+		File aFile = new File(outputDir, "ep-00-01-17.txt.xmi");
+		
+		assertThat(aFile).exists();
+		CasIOUtil.readJCas(aJCas, aFile);
+		
+		Collection<ParallelChunk> enChunks = JCasUtil.select(aJCas.getView(EuroparlParallelTextAnnotator.EN_TEXT_VIEW), ParallelChunk.class);
+		Collection<ParallelChunk> frChunks = JCasUtil.select(aJCas.getView(EuroparlParallelTextAnnotator.FR_TEXT_VIEW), ParallelChunk.class);
+		
+		for (ParallelChunk enChunk: enChunks){
+			assertThat(enChunk.getDocOffset()).isEqualTo(enChunk.getTranslation().getDocOffset());
+		}
+		
+		for (ParallelChunk frChunk: frChunks){
+			assertThat(frChunk.getDocOffset()).isEqualTo(frChunk.getTranslation().getDocOffset());
+		}
+
+	}
 }

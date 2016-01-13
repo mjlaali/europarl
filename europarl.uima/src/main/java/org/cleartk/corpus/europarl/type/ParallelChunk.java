@@ -11,8 +11,8 @@ import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** 
- * Updated by JCasGen Sun Nov 01 19:13:24 EST 2015
- * XML source: /Users/majid/Documents/git/europarl/europarl.uima/src/main/java/org/cleartk/corpus/europarl/type/europarl.xml
+ * Updated by JCasGen Wed Jan 13 15:46:06 EST 2016
+ * XML source: /Users/majid/Documents/git/europarl/europarl.uima/src/main/resources/org/cleartk/corpus/europarl/type/ParallelChunk.xml
  * @generated */
 public class ParallelChunk extends Annotation {
   /** @generated
@@ -72,6 +72,48 @@ public class ParallelChunk extends Annotation {
    */
   private void readObject() {/*default - does nothing empty block */}
      
-}
+  //*--------------*
+  //* Feature: docOffset
+
+  /** getter for docOffset - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public int getDocOffset() {
+    if (ParallelChunk_Type.featOkTst && ((ParallelChunk_Type)jcasType).casFeat_docOffset == null)
+      jcasType.jcas.throwFeatMissing("docOffset", "org.cleartk.corpus.europarl.type.ParallelChunk");
+    return jcasType.ll_cas.ll_getIntValue(addr, ((ParallelChunk_Type)jcasType).casFeatCode_docOffset);}
+    
+  /** setter for docOffset - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setDocOffset(int v) {
+    if (ParallelChunk_Type.featOkTst && ((ParallelChunk_Type)jcasType).casFeat_docOffset == null)
+      jcasType.jcas.throwFeatMissing("docOffset", "org.cleartk.corpus.europarl.type.ParallelChunk");
+    jcasType.ll_cas.ll_setIntValue(addr, ((ParallelChunk_Type)jcasType).casFeatCode_docOffset, v);}    
+   
+    
+  //*--------------*
+  //* Feature: translation
+
+  /** getter for translation - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public ParallelChunk getTranslation() {
+    if (ParallelChunk_Type.featOkTst && ((ParallelChunk_Type)jcasType).casFeat_translation == null)
+      jcasType.jcas.throwFeatMissing("translation", "org.cleartk.corpus.europarl.type.ParallelChunk");
+    return (ParallelChunk)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((ParallelChunk_Type)jcasType).casFeatCode_translation)));}
+    
+  /** setter for translation - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setTranslation(ParallelChunk v) {
+    if (ParallelChunk_Type.featOkTst && ((ParallelChunk_Type)jcasType).casFeat_translation == null)
+      jcasType.jcas.throwFeatMissing("translation", "org.cleartk.corpus.europarl.type.ParallelChunk");
+    jcasType.ll_cas.ll_setRefValue(addr, ((ParallelChunk_Type)jcasType).casFeatCode_translation, jcasType.ll_cas.ll_getFSRef(v));}    
+  }
 
     
