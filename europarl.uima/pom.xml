@@ -28,17 +28,18 @@
 	<distributionManagement>
 		<repository>
 			<id>dropbox.repo</id>
-			<url>file:///Users/majid/Documents/git/mvn-repo</url>
+			<url>file:///Users/majid/Documents/git/maven-repo</url>
 		</repository>
 	</distributionManagement>
 
 	<repositories>
 		<repository>
-			<id>majid-repo</id>
-			<name>Majid Laali repository</name>
-			<url>http://users.encs.concordia.ca/~m_laali/mvn-repo/</url>
+			<id>github repo</id>
+			<name>Majid's Repo</name>
+			<url>https://github.com/mjlaali/maven-repo/raw/master</url>
 		</repository>
 	</repositories>
+
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
