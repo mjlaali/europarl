@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>phd</groupId>
+	<groupId>clac.concordia.ca</groupId>
 	<artifactId>europarl.uima</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
@@ -27,15 +27,15 @@
 
 	<distributionManagement>
 		<repository>
-			<id>dropbox.repo</id>
+			<id>majid-repo</id>
 			<url>file:///Users/majid/Documents/git/maven-repo</url>
 		</repository>
 	</distributionManagement>
 
 	<repositories>
 		<repository>
-			<id>github repo</id>
-			<name>Majid's Repo</name>
+			<id>majid-repo</id>
+			<name>Majid Laali repository</name>
 			<url>https://github.com/mjlaali/maven-repo/raw/master</url>
 		</repository>
 	</repositories>
