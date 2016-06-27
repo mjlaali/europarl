@@ -49,7 +49,8 @@ public class ParalleDocumentTextReader extends JCasAnnotator_ImplBase{
 				String uri = langUris[2 * i];
 				String lang = langUris[2 * i + 1];
 				InputStream is = new URI(uri).toURL().openStream();
-				String content = IOUtils.toString(is, encoding);
+				String content = IOUtils.toString(is, encoding) + " '";
+				content = content.replace("&#x02BC;", "'").replace("&#x010D;", "c");
 				
 			    JCas view = aJCas.createView(VIEWES[i]);
 			    DocumentMetaData documentMetaData = DocumentMetaData.create(view.getCas());

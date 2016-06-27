@@ -1,7 +1,6 @@
 package org.cleartk.corpus.europarl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
@@ -47,8 +46,12 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 		List<ParallelChunk> enChunks = new ArrayList<>(JCasUtil.select(aJCas.getView(EN_TEXT_VIEW), ParallelChunk.class));
 		List<ParallelChunk> frChunks = new ArrayList<>(JCasUtil.select(aJCas.getView(FR_TEXT_VIEW), ParallelChunk.class));
 		
-		if (enChunks.size() != frChunks.size())
-			getLogger().error("The size of two parallel chunks are not equal." + enChunks.size() + "<>" + frChunks.size());
+		if (enChunks.size() != frChunks.size()){
+			String enFile = DocumentMetaData.get(aJCas.getView(EN_TEXT_VIEW)).getDocumentId();
+			String frFile = DocumentMetaData.get(aJCas.getView(FR_TEXT_VIEW)).getDocumentId();
+			getLogger().error("The size of two parallel chunks are not equal for " + 
+					enFile + " and " + frFile + "." + enChunks.size() + "<>" + frChunks.size());
+		}
 		
 		for (int i = 0; i < enChunks.size(); i++){
 			ParallelChunk enChunk = enChunks.get(i);
@@ -67,7 +70,7 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 
 		String text = view.getDocumentText();
 		
-		List<String> lines = new ArrayList<>(Arrays.asList(text.split("\n")));
+		List<String> lines = split(text);
 		StringBuilder parallelChunksText = new StringBuilder();
 		for (String line: lines){
 			if (!line.startsWith("<")){
@@ -89,6 +92,21 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 				// I should put another annotations here.
 			}
 		}
+		
+	}
+
+	private List<String> split(String text) {
+		List<String> results = new ArrayList<>();
+		int start = 0;
+		while (start < text.length()){
+			int end = text.indexOf('\n', start);
+			if (end == -1)
+				end = text.length();
+			results.add(text.substring(start, end));
+			start = end + 1;
+		}
+		
+		return results;
 	}
 
 
