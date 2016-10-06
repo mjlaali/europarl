@@ -58,6 +58,7 @@ public class EuroparlParallelTextAnnotatorTest {
 		List<Speaker> speakers = new ArrayList<>(JCasUtil.select(enTextView, Speaker.class));
 		assertThat(speakers).hasSize(92 - 5);	//five speakers did not speak!
 		assertThat(speakers.get(0).getBegin()).isEqualTo(26);
+		assertThat(speakers.get(0).getName()).isEqualTo("President");
 		assertThat(speakers.get(speakers.size() - 1).getEnd()).isEqualTo(enTextView.getDocumentText().length());
 		
 	}

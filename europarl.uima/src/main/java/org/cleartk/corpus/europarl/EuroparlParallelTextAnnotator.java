@@ -56,7 +56,7 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 		}
 	}
 
-	private void align(JCas aJCas) throws CASException {
+	protected void align(JCas aJCas) throws CASException {
 		List<ParallelChunk> enChunks = new ArrayList<>(JCasUtil.select(aJCas.getView(EN_TEXT_VIEW), ParallelChunk.class));
 		List<ParallelChunk> frChunks = new ArrayList<>(JCasUtil.select(aJCas.getView(FR_TEXT_VIEW), ParallelChunk.class));
 
@@ -94,7 +94,8 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 		
 		for (String line: lines){
 			if (!line.startsWith("<")){
-				start = addParallelChunk(textView, start, line);
+				addParallelChunk(textView, start, line);
+				start += line.length() + 1;
 			} else {
 				Map<String, String> params = parseLine(line);
 				String tag = params.get(TAG);
@@ -110,10 +111,8 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 		}
 	}
 
-	protected int addParallelChunk(JCas textView, int start, String line) {
+	protected void addParallelChunk(JCas textView, int start, String line) {
 		new ParallelChunk(textView, start, start + line.length()).addToIndexes();
-		start += line.length() + 1;
-		return start;
 	}
 
 	protected JCas createView(JCas aJCas, String textViewName, JCas view, List<String> lines)
@@ -172,17 +171,24 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 			
 			String key = null, value = null;
 			tokenStart += 1;
+			boolean quote = false;
+			
 			for (int i = tokenStart; i < line.length(); i++){
 				switch (line.charAt(i)) {
 				case ' ':
 				case '>':
-					value = line.substring(tokenStart, i).trim();
+					if (quote)
+						break;
+					value = line.substring(tokenStart, i).trim().replace("\"", "");
 					tokenStart = i + 1;
 					params.put(key.toUpperCase(), value);
 					break;
 				case '=':
-					key = line.substring(tokenStart, i).trim();
+					key = line.substring(tokenStart, i).trim().replace("\"", "");
 					tokenStart = i + 1;
+					break;
+				case '"':
+					quote = !quote;
 					break;
 
 				default:
