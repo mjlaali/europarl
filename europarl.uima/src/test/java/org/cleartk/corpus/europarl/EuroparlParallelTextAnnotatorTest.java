@@ -6,7 +6,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.uima.UIMAException;
@@ -19,6 +21,7 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.europarl.type.ParallelChunk;
+import org.cleartk.corpus.europarl.type.Speaker;
 import org.junit.Test;
 
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
@@ -31,6 +34,44 @@ public class EuroparlParallelTextAnnotatorTest {
 
 	@Test
 	public void givenAParallelTextWhenPuttingAnnotationsThenTheNumberOfChunksAreFine() throws ResourceInitializationException, UIMAException, IOException{
+		File outputDir = runOnSample();
+		
+		JCas aJCas = loagJCas00_01_17(outputDir);
+		
+		JCas enTextView = aJCas.getView(EuroparlParallelTextAnnotator.EN_TEXT_VIEW);
+		assertThat(enTextView.getCas().getDocumentLanguage()).isEqualTo("en");
+		JCas frTextView = aJCas.getView(EuroparlParallelTextAnnotator.FR_TEXT_VIEW);
+		assertThat(frTextView.getCas().getDocumentLanguage()).isEqualTo("fr");
+		
+		Collection<ParallelChunk> sentences = JCasUtil.select(enTextView, ParallelChunk.class);
+		assertThat(sentences).hasSize(1114 - 362);
+		
+	}
+	
+	@Test
+	public void givenAParallelTextWhenPuttingAnnotationsThenTheFirstSpeakerAnnotationsIsCorrect() throws ResourceInitializationException, UIMAException, IOException{
+		File outputDir = runOnSample();
+		
+		JCas aJCas = loagJCas00_01_17(outputDir);
+		
+		JCas enTextView = aJCas.getView(EuroparlParallelTextAnnotator.EN_TEXT_VIEW);
+		List<Speaker> speakers = new ArrayList<>(JCasUtil.select(enTextView, Speaker.class));
+		assertThat(speakers).hasSize(92 - 5);	//five speakers did not speak!
+		assertThat(speakers.get(0).getBegin()).isEqualTo(26);
+		assertThat(speakers.get(speakers.size() - 1).getEnd()).isEqualTo(enTextView.getDocumentText().length());
+		
+	}
+
+	private JCas loagJCas00_01_17(File outputDir) throws UIMAException, IOException {
+		JCas aJCas = JCasFactory.createJCas();
+		File aFile = new File(outputDir, "ep-00-01-17.txt.xmi");
+		
+		assertThat(aFile).exists();
+		CasIOUtil.readJCas(aJCas, aFile);
+		return aJCas;
+	}
+
+	private File runOnSample() throws IOException, UIMAException, ResourceInitializationException {
 		File sampleDir = new File("resources/sample");
 		File outputDir = new File("outputs/textWithAnnotations");
 		if (outputDir.exists()){
@@ -42,22 +83,9 @@ public class EuroparlParallelTextAnnotatorTest {
 				ParalleDocumentTextReader.getDescription(), 
 				EuroparlParallelTextAnnotator.getDescription(), 
 				createEngineDescription(XmiWriter.class, XmiWriter.PARAM_TARGET_LOCATION, outputDir));
-		
-		JCas aJCas = JCasFactory.createJCas();
-		File aFile = new File(outputDir, "ep-00-01-17.txt.xmi");
-		
-		assertThat(aFile).exists();
-		CasIOUtil.readJCas(aJCas, aFile);
-		
-		JCas enTextView = aJCas.getView(EuroparlParallelTextAnnotator.EN_TEXT_VIEW);
-		assertThat(enTextView.getCas().getDocumentLanguage()).isEqualTo("en");
-		JCas frTextView = aJCas.getView(EuroparlParallelTextAnnotator.FR_TEXT_VIEW);
-		assertThat(frTextView.getCas().getDocumentLanguage()).isEqualTo("fr");
-		
-		Collection<ParallelChunk> sentences = JCasUtil.select(enTextView, ParallelChunk.class);
-		assertThat(sentences).hasSize(1114 - 362);
-		
+		return outputDir;
 	}
+	
 	
 	@Test
 	public void whenReadingTextThenTheTextCanBeParsedByDKProBerkeleyParser() throws ResourceInitializationException, UIMAException, IOException{
@@ -90,19 +118,11 @@ public class EuroparlParallelTextAnnotatorTest {
 		
 	}
 	
+	
+	
 	@Test
 	public void whenReadingTextsThenParallelChunksOfSourceAreConnectedToTargetAndViceVersa() throws ResourceInitializationException, UIMAException, IOException{
-		File sampleDir = new File("resources/sample");
-		File outputDir = new File("outputs/textWithAnnotations");
-		if (outputDir.exists()){
-			FileUtils.deleteDirectory(outputDir);
-		}
-		outputDir.mkdirs();
-		
-		SimplePipeline.runPipeline(ParallelFileCollectionReader.getReaderDescription(sampleDir, "en", "fr"), 
-				ParalleDocumentTextReader.getDescription(), 
-				EuroparlParallelTextAnnotator.getDescription(), 
-				createEngineDescription(XmiWriter.class, XmiWriter.PARAM_TARGET_LOCATION, outputDir));
+		File outputDir = runOnSample();
 		
 		JCas aJCas = JCasFactory.createJCas();
 		File aFile = new File(outputDir, "ep-00-01-17.txt.xmi");

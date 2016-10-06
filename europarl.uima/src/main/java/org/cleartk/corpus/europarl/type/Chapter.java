@@ -1,6 +1,6 @@
 
 
-/* First created by JCasGen Sun Nov 01 19:05:32 EST 2015 */
+/* First created by JCasGen Thu Oct 06 12:42:54 EDT 2016 */
 package org.cleartk.corpus.europarl.type;
 
 import org.apache.uima.jcas.JCas; 
@@ -11,14 +11,14 @@ import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** 
- * Updated by JCasGen Sun Nov 01 19:13:24 EST 2015
- * XML source: /Users/majid/Documents/git/europarl/europarl.uima/src/main/java/org/cleartk/corpus/europarl/type/europarl.xml
+ * Updated by JCasGen Thu Oct 06 12:42:54 EDT 2016
+ * XML source: /Users/majid/Documents/git/europarl/europarl.uima/src/main/resources/org/cleartk/corpus/europarl/type/Chapter.xml
  * @generated */
-public class Paragraph extends Annotation {
+public class Chapter extends Annotation {
   /** @generated
    * @ordered 
    */
-  public final static int typeIndexID = JCasRegistry.register(Paragraph.class);
+  public final static int typeIndexID = JCasRegistry.register(Chapter.class);
   /** @generated
    * @ordered 
    */
@@ -31,14 +31,14 @@ public class Paragraph extends Annotation {
  
   /** Never called.  Disable default constructor
    * @generated */
-  protected Paragraph() {/* intentionally empty block */}
+  protected Chapter() {/* intentionally empty block */}
     
   /** Internal - constructor used by generator 
    * @generated
    * @param addr low level Feature Structure reference
    * @param type the type of this Feature Structure 
    */
-  public Paragraph(int addr, TOP_Type type) {
+  public Chapter(int addr, TOP_Type type) {
     super(addr, type);
     readObject();
   }
@@ -46,7 +46,7 @@ public class Paragraph extends Annotation {
   /** @generated
    * @param jcas JCas to which this Feature Structure belongs 
    */
-  public Paragraph(JCas jcas) {
+  public Chapter(JCas jcas) {
     super(jcas);
     readObject();   
   } 
@@ -56,7 +56,7 @@ public class Paragraph extends Annotation {
    * @param begin offset to the begin spot in the SofA
    * @param end offset to the end spot in the SofA 
   */  
-  public Paragraph(JCas jcas, int begin, int end) {
+  public Chapter(JCas jcas, int begin, int end) {
     super(jcas);
     setBegin(begin);
     setEnd(end);
@@ -72,6 +72,28 @@ public class Paragraph extends Annotation {
    */
   private void readObject() {/*default - does nothing empty block */}
      
-}
+ 
+    
+  //*--------------*
+  //* Feature: id
+
+  /** getter for id - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public String getId() {
+    if (Chapter_Type.featOkTst && ((Chapter_Type)jcasType).casFeat_id == null)
+      jcasType.jcas.throwFeatMissing("id", "org.cleartk.corpus.europarl.type.Chapter");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((Chapter_Type)jcasType).casFeatCode_id);}
+    
+  /** setter for id - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setId(String v) {
+    if (Chapter_Type.featOkTst && ((Chapter_Type)jcasType).casFeat_id == null)
+      jcasType.jcas.throwFeatMissing("id", "org.cleartk.corpus.europarl.type.Chapter");
+    jcasType.ll_cas.ll_setStringValue(addr, ((Chapter_Type)jcasType).casFeatCode_id, v);}    
+  }
 
     
