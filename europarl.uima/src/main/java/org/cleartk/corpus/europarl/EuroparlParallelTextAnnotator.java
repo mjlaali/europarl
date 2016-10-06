@@ -6,10 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.uima.UIMAException;
@@ -42,7 +40,6 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 	public static final String EN_TEXT_VIEW = "enTextView";
 	public static final String FR_TEXT_VIEW = "frTextView";
 	private static final String TAG = "TAG";
-	private Set<String> tags = new HashSet<>();
 
 	public static AnalysisEngineDescription getDescription() throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(EuroparlParallelTextAnnotator.class);
@@ -83,11 +80,44 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 
 	private void setAnnotations(JCas aJCas, String orgViewName, String textViewName) throws CASException {
 		JCas view = aJCas.getView(orgViewName);
-		JCas textView = aJCas.createView(textViewName);
-
 		String text = view.getDocumentText();
-
 		List<String> lines = split(text);
+		JCas textView = createView(aJCas, textViewName, view, lines);
+		addAnnotations(lines, textView);
+
+	}
+
+	protected void addAnnotations(List<String> lines, JCas textView) {
+		int start = 0;
+		Map<String, Map<String, String>> tagParams = new HashMap<>();
+		Map<String, Integer> tagStart = new HashMap<>();
+		
+		for (String line: lines){
+			if (!line.startsWith("<")){
+				start = addParallelChunk(textView, start, line);
+			} else {
+				Map<String, String> params = parseLine(line);
+				String tag = params.get(TAG);
+				addEuroparlAnnotation(textView, tagParams.get(tag), tagStart.get(tag), start);
+
+				tagStart.put(tag, start);
+				tagParams.put(tag, params);
+			}
+		}
+		
+		for (String tag: tagParams.keySet()){
+			addEuroparlAnnotation(textView, tagParams.get(tag), tagStart.get(tag), start);
+		}
+	}
+
+	protected int addParallelChunk(JCas textView, int start, String line) {
+		new ParallelChunk(textView, start, start + line.length()).addToIndexes();
+		start += line.length() + 1;
+		return start;
+	}
+
+	protected JCas createView(JCas aJCas, String textViewName, JCas view, List<String> lines)
+			throws CASException {
 		StringBuilder parallelChunksText = new StringBuilder();
 		for (String line: lines){
 			if (!line.startsWith("<")){
@@ -96,36 +126,16 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 			}
 		}
 
+		JCas textView = aJCas.createView(textViewName);
+
 		DocumentMetaData.copy(view, textView);
 		textView.setDocumentText(parallelChunksText.toString());
 		textView.setDocumentLanguage(view.getDocumentLanguage());
-
-		int start = 0;
-		Map<String, Map<String, String>> tagParams = new HashMap<>();
-		Map<String, Integer> tagStart = new HashMap<>();
-		
-		for (String line: lines){
-			if (!line.startsWith("<")){
-				new ParallelChunk(textView, start, start + line.length()).addToIndexes();
-				start += line.length() + 1;
-			} else {
-				Map<String, String> params = parseLine(line);
-				String tag = params.get(TAG);
-				addAnnotation(textView, tagParams.get(tag), tagStart.get(tag), start);
-
-				tagStart.put(tag, start);
-				tagParams.put(tag, params);
-			}
-		}
-		
-		for (String tag: tagParams.keySet()){
-			addAnnotation(textView, tagParams.get(tag), tagStart.get(tag), start);
-		}
-
+		return textView;
 	}
 
 
-	private void addAnnotation(JCas aJCas, Map<String, String> params, Integer begin, int end) {
+	protected void addEuroparlAnnotation(JCas aJCas, Map<String, String> params, Integer begin, int end) {
 		if (params == null || begin == end)
 			return;
 		
@@ -198,13 +208,6 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 
 		return results;
 	}
-
-	@Override
-	public void collectionProcessComplete() throws AnalysisEngineProcessException {
-		System.out.println(tags);
-		super.collectionProcessComplete();
-	}
-
 
 	public static void main(String[] args) throws IOException, ResourceInitializationException, UIMAException {
 		File sampleDir = new File("/Users/majid/Documents/git/parallel.corpus.sampling/parallel.corpus.sampling/sample/00");
