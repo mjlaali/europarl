@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,7 +59,8 @@ public class ParallelFileCollectionReader extends JCasCollectionReader_ImplBase{
 		}
 		File[] langDirs = dir.listFiles();
 		if (langDirs.length != 2)
-			throw new ResourceInitializationException(new RuntimeException("Only two languages are supported!"));
+			throw new ResourceInitializationException(new RuntimeException(
+					String.format("Only two languages are supported! Check the directory %s, it contains %s", dir.getAbsolutePath(), Arrays.toString(langDirs))));
 
 		Map<String, List<File>> parallelFiles = new HashMap<>();
 		File enDir = langDirs[0];
