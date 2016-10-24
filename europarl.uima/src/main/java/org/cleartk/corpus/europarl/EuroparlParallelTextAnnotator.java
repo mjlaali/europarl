@@ -177,11 +177,12 @@ public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 				switch (line.charAt(i)) {
 				case ' ':
 				case '>':
-					if (quote)
+					if (quote || key == null)
 						break;
 					value = line.substring(tokenStart, i).trim().replace("\"", "");
 					tokenStart = i + 1;
 					params.put(key.toUpperCase(), value);
+					key = null;
 					break;
 				case '=':
 					key = line.substring(tokenStart, i).trim().replace("\"", "");
