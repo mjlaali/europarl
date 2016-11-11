@@ -36,6 +36,11 @@ import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
 		outputSofas = {EuroparlParallelTextAnnotator.EN_TEXT_VIEW, EuroparlParallelTextAnnotator.FR_TEXT_VIEW})
 @TypeCapability(
 		outputs = "org.cleartk.corpus.europarl.type.ParallelChunk")
+/**
+ * Read Europarl texts and put annotations. This 
+ * @author majid
+ *
+ */
 public class EuroparlParallelTextAnnotator extends JCasAnnotator_ImplBase{
 	public static final String EN_TEXT_VIEW = "enTextView";
 	public static final String FR_TEXT_VIEW = "frTextView";
