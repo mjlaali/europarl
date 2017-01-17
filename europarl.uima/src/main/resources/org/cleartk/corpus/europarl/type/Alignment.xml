@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <name>Alignment</name>
+    <description/>
+    <version>1.0</version>
+    <vendor/>
+  <types>
+    <typeDescription>
+      <name>ca.concordia.clac.uima.types.paralleltexts.Alignment</name>
+      <description/>
+      <supertypeName>uima.tcas.Annotation</supertypeName>
+      <features>
+        <featureDescription>
+          <name>comment</name>
+          <description/>
+          <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
+        <featureDescription>
+          <name>wrappedAnnotation</name>
+          <description/>
+          <rangeTypeName>uima.tcas.Annotation</rangeTypeName>
+        </featureDescription>
+        <featureDescription>
+          <name>alignment</name>
+          <description/>
+          <rangeTypeName>ca.concordia.clac.uima.types.paralleltexts.Alignment</rangeTypeName>
+        </featureDescription>
+      </features>
+    </typeDescription>
+  </types>
+</typeSystemDescription>
