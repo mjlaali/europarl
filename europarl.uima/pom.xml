@@ -9,7 +9,10 @@
 
 	<name>europarl.uima</name>
 	<url>http://maven.apache.org</url>
-
+	<properties>
+		<dkpro.version>1.8.0</dkpro.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -40,31 +43,26 @@
 		</repository>
 	</repositories>
 
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
 	<dependencies>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.apache.uima</groupId>
 			<artifactId>uimaj-document-annotation</artifactId>
-			<version>RELEASE</version>
-		</dependency>
+			<version>${uima.version}</version>
+		</dependency> -->
 		
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
 			<artifactId>
 				de.tudarmstadt.ukp.dkpro.core.io.text-asl
 			</artifactId>
-			<version>1.7.0</version>
+			<version>${dkpro.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
 			<artifactId>
 				de.tudarmstadt.ukp.dkpro.core.io.xmi-asl
 			</artifactId>
-			<version>1.7.0</version>
+			<version>${dkpro.version}</version>
 		</dependency>
 
 		<dependency>
@@ -72,14 +70,14 @@
 			<artifactId>
 				de.tudarmstadt.ukp.dkpro.core.berkeleyparser-gpl
 			</artifactId>
-			<version>1.7.0</version>
+			<version>${dkpro.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
 			<artifactId>
 				de.tudarmstadt.ukp.dkpro.core.opennlp-asl
 			</artifactId>
-			<version>1.7.0</version>
+			<version>${dkpro.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

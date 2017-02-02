@@ -118,7 +118,9 @@ public class ParallelFileCollectionReaderTest {
 			FileUtils.deleteDirectory(outDir);
 		outDir.mkdirs();
 		
-		SimplePipeline.runPipeline(readerDesc, createEngineDescription(XmiWriter.class, XmiWriter.PARAM_TARGET_LOCATION, outDir));
+		SimplePipeline.runPipeline(readerDesc, createEngineDescription(XmiWriter.class, 
+				XmiWriter.PARAM_TARGET_LOCATION, outDir, 
+				XmiWriter.PARAM_OVERWRITE, true));
 		assertThat(FileUtils.listFiles(outDir, new String[]{"xmi"}, true)).hasSize(enFileNames.size());
 		
 	}

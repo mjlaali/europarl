@@ -83,7 +83,9 @@ public class EuroparlParallelTextAnnotatorTest {
 		SimplePipeline.runPipeline(ParallelFileCollectionReader.getReaderDescription(sampleDir, "en", "fr"), 
 				ParalleDocumentTextReader.getDescription(), 
 				EuroparlParallelTextAnnotator.getDescription(), 
-				createEngineDescription(XmiWriter.class, XmiWriter.PARAM_TARGET_LOCATION, outputDir));
+				createEngineDescription(XmiWriter.class, 
+						XmiWriter.PARAM_TARGET_LOCATION, outputDir,
+						XmiWriter.PARAM_OVERWRITE, true));
 		return outputDir;
 	}
 	
