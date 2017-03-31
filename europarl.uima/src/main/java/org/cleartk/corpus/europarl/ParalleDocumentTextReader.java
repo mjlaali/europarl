@@ -27,6 +27,13 @@ public class ParalleDocumentTextReader extends JCasAnnotator_ImplBase{
 
 	public static final String EN_VIEW = "enView";
 	public static final String FR_VIEW = "frView";
+	
+	private String xml10pattern = "[^"
+            + "\u0009\r\n"
+            + "\u0020-\uD7FF"
+            + "\uE000-\uFFFD"
+            + "\ud800\udc00-\udbff\udfff"
+            + "]";
 
 	private static final String[] VIEWES = new String[]{EN_VIEW, FR_VIEW}; 
 	public static AnalysisEngineDescription getDescription() throws ResourceInitializationException {
@@ -49,7 +56,7 @@ public class ParalleDocumentTextReader extends JCasAnnotator_ImplBase{
 				String uri = langUris[2 * i];
 				String lang = langUris[2 * i + 1];
 				InputStream is = new URI(uri).toURL().openStream();
-				String content = IOUtils.toString(is, encoding).replace("&#x02BC;", "'").replace("&#x010D;", "c");
+				String content = IOUtils.toString(is, encoding).replace("&#x02BC;", "'").replace("&#x010D;", "c").replaceAll(xml10pattern, "");
 				
 			    JCas view = aJCas.createView(VIEWES[i]);
 			    DocumentMetaData documentMetaData = DocumentMetaData.create(view.getCas());

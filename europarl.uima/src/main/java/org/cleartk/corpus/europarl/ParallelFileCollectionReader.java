@@ -58,9 +58,9 @@ public class ParallelFileCollectionReader extends JCasCollectionReader_ImplBase{
 			throw new ResourceInitializationException(e);
 		}
 		File[] langDirs = dir.listFiles();
-		if (langDirs.length != 2)
+		if (langDirs == null || langDirs.length != 2)
 			throw new ResourceInitializationException(new RuntimeException(
-					String.format("Only two languages are supported! Check the directory %s, it contains %s", dir.getAbsolutePath(), Arrays.toString(langDirs))));
+					String.format("Only two languages are supported! Check the directory %s, it contains %s", dir.getAbsolutePath(), langDirs == null ? "nothing" : Arrays.toString(langDirs))));
 
 		Map<String, List<File>> parallelFiles = new HashMap<>();
 		File enDir = langDirs[0];
